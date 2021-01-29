@@ -6,13 +6,16 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
 	public GameObject Player;
+	public int counter;
+	public Text counterText;
     void Start()
     {
-        
+		counter = 0;   
     }
 
     void Update()
     {
-        
+		counter = Mathf.FloorToInt(Time.timeSinceLevelLoad);
+		counterText.text = counter.ToString();
     }
 }
