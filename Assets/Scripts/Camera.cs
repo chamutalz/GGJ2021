@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class Camera : MonoBehaviour
 {
-    // Start is called before the first frame update
+	public Transform playerTransform;
+	float clampedx;
+	float clampedy;
+	public float XMIN, XMAX, YMIN, YMAX;
+	public Vector3 offset;
+
     void Start()
     {
-        
+	
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
-    }
+		clampedx = Mathf.Clamp(playerTransform.position.x, XMIN, XMAX);
+		clampedy = Mathf.Clamp(playerTransform.position.y, YMIN, YMAX);
+		transform.position = new Vector3(clampedx + offset.x, clampedy + offset.y, -10);
+	}
 }

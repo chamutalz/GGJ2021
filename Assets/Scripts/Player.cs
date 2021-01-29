@@ -7,32 +7,37 @@ public class Player : MonoBehaviour
 	Rigidbody2D playerRigidbody;
 	Animator playerAnimator;
 	public float speed = 5f;
+	bool hasLegs;
+	bool rightHand;
+	bool leftHand;
 	Vector2 playerPosition;
 	float inputX;
 	bool facingRight;
 	bool grounded;
+	string animationTrigger;
 	public int bodyPartCollected = 0; // change to bodypart
-	public GameObject[] bodyparts;
+	//public GameObject[] bodyparts;
 
     void Start()
     {
 		playerRigidbody = GetComponent<Rigidbody2D>();
 		facingRight = true;
+		hasLegs = false;
     }
 
     void Update()
     {
 		inputX = Input.GetAxisRaw("Horizontal");
 		playerPosition = new Vector2(inputX, 0);
-		Move(bodyPartCollected);
-		Animate();
+		Move(hasLegs);
+		Animate(animationTrigger);
 		Flip();
     }
 
-	public void Move(int bodyPart)
+	public void Move(bool legs)
 	{
 		transform.Translate(playerPosition * speed * Time.deltaTime);
-		if(bodyPart > 1)
+		if(legs)
 		{
 			if (Input.GetKeyDown("space"))
 			{
@@ -57,7 +62,7 @@ public class Player : MonoBehaviour
 		}
 	}
 
-	public void Animate()
+	public void Animate(string trigger)
 	{
 
 	}
@@ -69,4 +74,56 @@ public class Player : MonoBehaviour
 			grounded = true;
 		}
 	}
+
+	public bool AttachRightHand()
+	{
+		rightHand = true;
+		return rightHand;
+	}
+
+	public bool DetachRightHand()
+	{
+		rightHand = false;
+		return rightHand;
+	}
+
+	public bool AttachLeftHand()
+	{
+		leftHand = true;
+		return leftHand;
+	}
+
+	public bool DetachLeftHand()
+	{
+		leftHand = false;
+		return leftHand;
+	}
+
+	public bool AttachLegs()
+	{
+		hasLegs = true;
+		return hasLegs;
+	}
+
+	public bool DetachLegs()
+	{
+		return false;
+	}
+
+	private void OnTriggerEnter2D(Collider2D otherCollider)
+	{
+		if(otherCollider.gameObject.tag == "LeftHand")
+		{
+			AttachLeftHand();
+		}
+		if(otherCollider.gameObject.tag == "RightHand")
+		{
+			AttachRightHand();
+		}
+		if(otherCollider.gameObject.tag == "Legs")
+		{
+			AttachLegs();
+		}
+	}
 }
+

@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 	public GameObject Player;
 	public int counter;
 	public Text counterText;
+	public AudioClip[] audioClips;
+	public AudioSource audioSource;
     void Start()
     {
 		counter = 0;   
