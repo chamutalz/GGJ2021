@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-	public GameObject Player;
+	public Player player;
 	public int counter;
 	public Text counterText;
+	public GameObject gameOverCanvas;
+	bool exitKey;
 	public AudioClip[] audioClips;
 	public AudioSource audioSource;
     void Start()
@@ -19,5 +21,14 @@ public class GameManager : MonoBehaviour
     {
 		counter = Mathf.FloorToInt(Time.timeSinceLevelLoad);
 		counterText.text = counter.ToString();
-    }
+		if (exitKey && player.leftHand)
+		{
+			GameOver();
+		}
+	}
+
+	public void GameOver()
+	{
+		//gameOverCanvas.SetActive(true);
+	}
 }

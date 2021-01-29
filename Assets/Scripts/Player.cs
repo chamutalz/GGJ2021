@@ -7,9 +7,10 @@ public class Player : MonoBehaviour
 	Rigidbody2D playerRigidbody;
 	Animator playerAnimator;
 	public float speed = 5f;
-	bool hasLegs;
-	bool rightHand;
-	bool leftHand;
+	bool hasLegs; //allows walk and jump
+	bool rightHand; //allows hang
+	[HideInInspector]
+	public bool leftHand; //allows climbing ladders and exit game
 	Vector2 playerPosition;
 	float inputX;
 	bool facingRight;
@@ -21,6 +22,7 @@ public class Player : MonoBehaviour
     void Start()
     {
 		playerRigidbody = GetComponent<Rigidbody2D>();
+		playerAnimator = GetComponent<Animator>();
 		facingRight = true;
 		hasLegs = false;
     }
@@ -32,11 +34,13 @@ public class Player : MonoBehaviour
 		Move(hasLegs);
 		Animate(animationTrigger);
 		Flip();
+
     }
 
 	public void Move(bool legs)
 	{
 		transform.Translate(playerPosition * speed * Time.deltaTime);
+		animationTrigger = "Roll";
 		if(legs)
 		{
 			if (Input.GetKeyDown("space"))
@@ -64,7 +68,7 @@ public class Player : MonoBehaviour
 
 	public void Animate(string trigger)
 	{
-
+		playerAnimator.SetTrigger(trigger);
 	}
 
 	private void OnCollisionEnter2D(Collision2D collision)
@@ -101,6 +105,7 @@ public class Player : MonoBehaviour
 
 	public bool AttachLegs()
 	{
+		animationTrigger = "Walk";
 		hasLegs = true;
 		return hasLegs;
 	}
@@ -115,15 +120,19 @@ public class Player : MonoBehaviour
 		if(otherCollider.gameObject.tag == "LeftHand")
 		{
 			AttachLeftHand();
+			Destroy(otherCollider.gameObject);
 		}
 		if(otherCollider.gameObject.tag == "RightHand")
 		{
 			AttachRightHand();
+			Destroy(otherCollider.gameObject);
 		}
-		if(otherCollider.gameObject.tag == "Legs")
+		if (otherCollider.gameObject.tag == "Legs")
 		{
 			AttachLegs();
+			Destroy(otherCollider.gameObject);
 		}
 	}
+
 }
 
