@@ -7,9 +7,14 @@ public class Player : MonoBehaviour
 	Rigidbody2D playerRigidbody;
 	Animator playerAnimator;
 	public float speed = 5f;
-	bool hasLegs; //allows walk and jump
-	bool rightHand; //allows picking up key
-	bool torso; //allows crawl (bigger collider)
+	[HideInInspector]
+	public bool game;
+	[HideInInspector]
+	public bool hasLegs; 
+	[HideInInspector]
+	public bool rightHand; //allows picking up key
+	[HideInInspector]
+	public bool torso; 
 	[HideInInspector]
 	public bool leftHand; //allows exit game
 	Vector2 playerPosition;
@@ -18,17 +23,24 @@ public class Player : MonoBehaviour
 	bool facingRight;
 	bool grounded;
 	string animationTrigger;
-
-
-    void Start()
+	[HideInInspector]
+	public int bodyPart;
+	bool key1;
+	[HideInInspector]
+	public int displayText;
+	void Start()
     {
 		playerRigidbody = GetComponent<Rigidbody2D>();
 		playerAnimator = GetComponent<Animator>();
 		myCapsule = gameObject.GetComponent<CapsuleCollider2D>();
 		facingRight = true;
+		game = false;
 		hasLegs = false;
 		animationTrigger = "Idle";
-    }
+		bodyPart = 0;
+		key1 = false;
+		displayText = 2;
+	}
 
     void Update()
     {
@@ -52,7 +64,7 @@ public class Player : MonoBehaviour
 			{
 				if (grounded)
 				{
-					playerRigidbody.AddForce(new Vector2(0, 6.5f), ForceMode2D.Impulse);
+					playerRigidbody.AddForce(new Vector2(0, 7.5f), ForceMode2D.Impulse);
 					grounded = !grounded;
 				}
 			}
@@ -73,7 +85,6 @@ public class Player : MonoBehaviour
 
 	public void Animate(string trigger)
 	{
-		Debug.Log("animate(trigger) = " + trigger);
 		playerAnimator.SetTrigger(trigger);
 	}
 
@@ -83,11 +94,19 @@ public class Player : MonoBehaviour
 		{
 			grounded = true;
 		}
+
+		if (collision.gameObject.tag == "Door1" && key1)
+		{
+			Destroy(collision.gameObject);
+
+		}
+
 	}
 
 	public bool AttachTorso()
 	{
 		animationTrigger = "Crawl";
+		bodyPart = 1;
 		Vector2 newSize = new Vector2(2.5f, 2.5f);
 		myCapsule.size = newSize;
 		torso = true;
@@ -110,6 +129,7 @@ public class Player : MonoBehaviour
 	public bool AttachLegs()
 	{
 		animationTrigger = "Walk";
+		bodyPart = 2;
 		Vector2 newSize = new Vector2(2.2f, 4.3f);
 		myCapsule.size = newSize;
 		hasLegs = true;
@@ -140,7 +160,31 @@ public class Player : MonoBehaviour
 			AttachTorso();
 			Destroy(otherCollider.gameObject);
 		}
+		if(otherCollider.gameObject.tag == "Finish")
+		{
+			game = true;
+		}
+		if(otherCollider.gameObject.tag == "Key2")
+		{
+			displayText = 0;
+		}
+		if (otherCollider.gameObject.tag == "Key3")
+		{
+			displayText = 2;
+		}
+		if (otherCollider.gameObject.tag == "Key1" && rightHand)
+		{
+			key1 = true;
+			Destroy(otherCollider.gameObject);
+		}
+		else if(otherCollider.gameObject.tag == "Key1" && !rightHand)
+		{
+			displayText = 1;
+		}
+
 	}
+
+
 
 }
 

@@ -11,6 +11,9 @@ TagManager:
   - Torso
   - Key1
   - Key2
+  - Door1
+  - Door2
+  - Key3
   layers:
   - Default
   - TransparentFX
