@@ -16,10 +16,11 @@ public class GameManager : MonoBehaviour
 	public GameObject gameOverCanvas;
 	public AudioClip[] audioClips;
 	public AudioSource audioSource;
+	bool stopText;
 	int bodyPart;
 	bool torso, legs, rightHand, leftHand;
+	bool isText;
 	int whichText;
-
 
     void Start()
     {
@@ -31,19 +32,33 @@ public class GameManager : MonoBehaviour
 	{
 		counter = Mathf.FloorToInt(Time.timeSinceLevelLoad);
 		counterText.text = "Time alone: " + counter.ToString();
-		whichText = player.displayText;
+		isText = player.displayText;
+		whichText = player.textKey;
 		torso = player.torso;
 		legs = player.hasLegs;
 		rightHand = player.rightHand;
 		leftHand = player.leftHand;
 		bodyPart = player.bodyPart;
+		stopText = player.stopText;
 		door2.SetActive(switched.off);
-		//DisplayOtherTexts(whichText);
-
+		if (isText)
+		{
+			DisplayOtherTexts(whichText);
+		}
+		if (stopText)
+		{
+			StopText();
+		}
 		if (switched.pingSfx)
 		{
 			switched.pingSfx = false;
-			//sfx switch
+			audioSource.PlayOneShot(audioClips[1], 0.7f);
+
+		}
+		if(player.door1 == false)
+		{
+			audioSource.PlayOneShot(audioClips[0], 0.6f);
+			player.door1 = true;
 		}
 		if (player.game && player.leftHand)
 		{
@@ -88,12 +103,13 @@ public class GameManager : MonoBehaviour
 	{
 		storyCanvas.SetActive(true);
 		storyLineText.text = StoryTexts.otherTexts[whichText];
-		if(whichText == 2)
-		{
-			storyCanvas.SetActive(false);
-
-		}
+		isText = false;
 	} 
+	public void StopText()
+	{
+		storyCanvas.SetActive(false);
+
+	}
 
 	public void RestartLevel()
 	{

@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
 	Rigidbody2D playerRigidbody;
 	Animator playerAnimator;
+	public int textKey;
 	public float speed = 5f;
 	[HideInInspector]
 	public bool game;
@@ -25,9 +26,12 @@ public class Player : MonoBehaviour
 	string animationTrigger;
 	[HideInInspector]
 	public int bodyPart;
-	bool key1;
+	public bool key1;
 	[HideInInspector]
-	public int displayText;
+	public bool displayText;
+	[HideInInspector]
+	public bool door1;
+	public bool stopText;
 	void Start()
     {
 		playerRigidbody = GetComponent<Rigidbody2D>();
@@ -39,7 +43,8 @@ public class Player : MonoBehaviour
 		animationTrigger = "Idle";
 		bodyPart = 0;
 		key1 = false;
-		displayText = 2;
+		displayText = false;
+		door1 = true;
 	}
 
     void Update()
@@ -98,6 +103,7 @@ public class Player : MonoBehaviour
 		if (collision.gameObject.tag == "Door1" && key1)
 		{
 			Destroy(collision.gameObject);
+			door1 = false;
 
 		}
 
@@ -166,11 +172,14 @@ public class Player : MonoBehaviour
 		}
 		if(otherCollider.gameObject.tag == "Key2")
 		{
-			displayText = 0;
+			displayText = true;
+			textKey = 0;
+			stopText = false;
 		}
 		if (otherCollider.gameObject.tag == "Key3")
 		{
-			displayText = 2;
+			stopText = true;
+			displayText = false;
 		}
 		if (otherCollider.gameObject.tag == "Key1" && rightHand)
 		{
@@ -179,7 +188,9 @@ public class Player : MonoBehaviour
 		}
 		else if(otherCollider.gameObject.tag == "Key1" && !rightHand)
 		{
-			displayText = 1;
+			displayText = true;
+			textKey = 1;
+			stopText = false;
 		}
 
 	}
