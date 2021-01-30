@@ -8,29 +8,34 @@ public class Player : MonoBehaviour
 	Animator playerAnimator;
 	public float speed = 5f;
 	bool hasLegs; //allows walk and jump
-	bool rightHand; //allows hang
+	bool rightHand; //allows picking up key
+	bool torso; //allows crawl (bigger collider)
 	[HideInInspector]
-	public bool leftHand; //allows climbing ladders and exit game
+	public bool leftHand; //allows exit game
 	Vector2 playerPosition;
+	CapsuleCollider2D myCapsule;
 	float inputX;
 	bool facingRight;
 	bool grounded;
 	string animationTrigger;
-	public int bodyPartCollected = 0; // change to bodypart
-	//public GameObject[] bodyparts;
+
 
     void Start()
     {
 		playerRigidbody = GetComponent<Rigidbody2D>();
 		playerAnimator = GetComponent<Animator>();
+		myCapsule = gameObject.GetComponent<CapsuleCollider2D>();
 		facingRight = true;
 		hasLegs = false;
+		animationTrigger = "Idle";
     }
 
     void Update()
     {
 		inputX = Input.GetAxisRaw("Horizontal");
 		playerPosition = new Vector2(inputX, 0);
+		if (inputX != 0 && !hasLegs && !rightHand && !torso)
+			animationTrigger = "Roll";
 		Move(hasLegs);
 		Animate(animationTrigger);
 		Flip();
@@ -40,7 +45,7 @@ public class Player : MonoBehaviour
 	public void Move(bool legs)
 	{
 		transform.Translate(playerPosition * speed * Time.deltaTime);
-		animationTrigger = "Roll";
+		
 		if(legs)
 		{
 			if (Input.GetKeyDown("space"))
@@ -68,6 +73,7 @@ public class Player : MonoBehaviour
 
 	public void Animate(string trigger)
 	{
+		Debug.Log("animate(trigger) = " + trigger);
 		playerAnimator.SetTrigger(trigger);
 	}
 
@@ -79,15 +85,19 @@ public class Player : MonoBehaviour
 		}
 	}
 
-	public bool AttachRightHand()
+	public bool AttachTorso()
 	{
-		rightHand = true;
-		return rightHand;
+		animationTrigger = "Crawl";
+		Vector2 newSize = new Vector2(2.5f, 2.5f);
+		myCapsule.size = newSize;
+		torso = true;
+		return torso;
 	}
 
-	public bool DetachRightHand()
+	public bool AttachRightHand()
 	{
-		rightHand = false;
+		animationTrigger = "RightHandWalk";
+		rightHand = true;
 		return rightHand;
 	}
 
@@ -97,22 +107,13 @@ public class Player : MonoBehaviour
 		return leftHand;
 	}
 
-	public bool DetachLeftHand()
-	{
-		leftHand = false;
-		return leftHand;
-	}
-
 	public bool AttachLegs()
 	{
 		animationTrigger = "Walk";
+		Vector2 newSize = new Vector2(4.3f, 4.3f);
+		myCapsule.size = newSize;
 		hasLegs = true;
 		return hasLegs;
-	}
-
-	public bool DetachLegs()
-	{
-		return false;
 	}
 
 	private void OnTriggerEnter2D(Collider2D otherCollider)
@@ -126,10 +127,17 @@ public class Player : MonoBehaviour
 		{
 			AttachRightHand();
 			Destroy(otherCollider.gameObject);
+
 		}
 		if (otherCollider.gameObject.tag == "Legs")
 		{
 			AttachLegs();
+			Destroy(otherCollider.gameObject);
+
+		}
+		if(otherCollider.gameObject.tag == "Torso")
+		{
+			AttachTorso();
 			Destroy(otherCollider.gameObject);
 		}
 	}
