@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
 			{
 				if (grounded)
 				{
-					playerRigidbody.AddForce(new Vector2(0, 6), ForceMode2D.Impulse);
+					playerRigidbody.AddForce(new Vector2(0, 6.5f), ForceMode2D.Impulse);
 					grounded = !grounded;
 				}
 			}
@@ -110,7 +110,7 @@ public class Player : MonoBehaviour
 	public bool AttachLegs()
 	{
 		animationTrigger = "Walk";
-		Vector2 newSize = new Vector2(4.3f, 4.3f);
+		Vector2 newSize = new Vector2(2.2f, 4.3f);
 		myCapsule.size = newSize;
 		hasLegs = true;
 		return hasLegs;

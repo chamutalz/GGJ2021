@@ -9,6 +9,8 @@ TagManager:
   - RightHand
   - Legs
   - Torso
+  - Key1
+  - Key2
   layers:
   - Default
   - TransparentFX

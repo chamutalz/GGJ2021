@@ -16,6 +16,11 @@ public class MenuBehaviour : MonoBehaviour
 		aboutCanvas.SetActive(true);
 	}
 
+	public void CloseAbout()
+	{
+		aboutCanvas.SetActive(false);
+	}
+
 	public void Quit()
 	{
 		Application.Quit();
